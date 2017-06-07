@@ -13,6 +13,11 @@ class NotesController < ApplicationController
     end
   end
 
+  def show
+    note = Note.find(params['id'])
+    render json: note
+  end
+
   private
 
   def note_params
@@ -22,4 +27,5 @@ class NotesController < ApplicationController
   def render_errors(note)
     { errors: note.errors }
   end
+
 end

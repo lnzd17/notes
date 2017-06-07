@@ -55,4 +55,13 @@ RSpec.describe NotesController, type: :controller do
     end
 
   end
+
+  describe 'note#show action' do
+    it 'return a note' do
+      note = FactoryGirl.create(:note)
+      get :show, params: { id: note.id }
+      json = JSON.parse(response.body)
+      expect(json['id']).to eq(note.id)
+    end
+  end
 end
