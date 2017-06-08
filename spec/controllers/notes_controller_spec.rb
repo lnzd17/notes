@@ -18,7 +18,7 @@ RSpec.describe NotesController, type: :controller do
   end
 
   describe 'notes#create action' do
-    before(:each) do
+    before do
       post :create, params: {note: {title: 'First', content: 'Hello'} }
     end
 
@@ -40,7 +40,7 @@ RSpec.describe NotesController, type: :controller do
   end
 
   describe 'notes#create action validation' do
-    before(:each) do
+    before do
       post :create, params: {note: {title: '', content: ''} }
     end
 
@@ -88,6 +88,22 @@ RSpec.describe NotesController, type: :controller do
       json = JSON.parse(response.body)
       expect(json['errors']['title'][0]).to eq("can't be blank")
       expect(json['errors']['content'][0]).to eq("can't be blank")
+    end
+  end
+
+  describe 'note#destroy action' do
+    before do
+      @note = FactoryGirl.create(:note)
+      delete :destroy, params: { id: @note.id }
+    end
+
+    it 'destroys a note' do
+      note = Note.find_by_id(@note.id)
+      expect(note).to eq(nil)
+    end
+
+    it 'returns a no_content error' do
+      expect(response).to have_http_status(:no_content)
     end
   end
 end
