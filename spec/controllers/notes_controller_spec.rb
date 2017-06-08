@@ -64,4 +64,30 @@ RSpec.describe NotesController, type: :controller do
       expect(json['id']).to eq(note.id)
     end
   end
+
+  describe 'note#update action' do
+    before do
+      @note = FactoryGirl.create(:note)
+    end
+
+    it 'returns the updated note response' do
+      put :update, params: { id: @note.id, note: { title: 'Updated First', content: 'Updated this note.'} }
+      json = JSON.parse(response.body)
+      expect(json['title']).to eq('Updated First')
+      expect(json['content']).to eq('Updated this note.')
+      expect(response).to be_success
+    end
+
+    it 'deals with validation errors' do
+      put :update, params: { id: @note.id, note: { title: '', content: ''} }
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it 'returns json error on validation error' do
+      put :update, params: { id: @note.id, note: { title: '', content: ''} }
+      json = JSON.parse(response.body)
+      expect(json['errors']['title'][0]).to eq("can't be blank")
+      expect(json['errors']['content'][0]).to eq("can't be blank")
+    end
+  end
 end
